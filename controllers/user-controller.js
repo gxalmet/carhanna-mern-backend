@@ -37,8 +37,10 @@ var userController = {
             email: req.body.email,
             password: bcrypt.hashSync(req.body.password)
         });
+        // console.log(user);
         try {
             const createdUser = await user.save();
+            // console.log(createdUser);
             return res.status(200).send({
                 _id: createdUser._id,
                 name: createdUser.name,
@@ -47,6 +49,7 @@ var userController = {
                 token: generateToken(createdUser)
             });
         } catch (error) {
+            console.log(error);
             return res.status(500).send({ message: error.message });
         }
     },
@@ -105,6 +108,7 @@ var userController = {
     searchUser: async function(req, res) {
 
         const fieldSearch = req.query.fieldSearch;
+        // console.log(fieldSearch);
         if (!fieldSearch) {
             return res.status(404).send({ message: "Enter some value to search" });
         }
@@ -121,6 +125,7 @@ var userController = {
 
         try {
             var readTeam = await Team.find(queryTeam);
+
         } catch (error) {
             console.log(error);
             return res.status(404).send({ message: "Error searching teams for user selection." });
@@ -131,20 +136,25 @@ var userController = {
             const usersSearch = await User.find(queryUsers);
 
             const usersResult = [];
+            // usersSearch.map(user => {
+
+            //     const find = readTeam[0].collegues.map(col => {
+            //         if (user._id.equals(col)) {
+            //             return true
+            //         }
+            //     });
+            //     console.log(find);
+            //     if (!find) {
+            //         usersResult.push({ _id: user._id, name: user.name, surname: user.surname, email: user.email });
+            //     }
+            // });
             usersSearch.map(user => {
-
-                const find = readTeam[0].collegues.map(col => {
-                    if (user._id.equals(col)) {
-                        return true
-                    }
-                });
-
-                if (!find) {
+                if (!readTeam[0].collegues.includes(user._id)) {
                     usersResult.push({ _id: user._id, name: user.name, surname: user.surname, email: user.email });
                 }
             });
-
-            return res.status(200).send(usersResult);
+            // console.log(usersResult);
+            return res.status(200).send({ usersResult });
         } catch (error) {
             console.log(error);
             return res.status(404).send({ message: "Users not found." });

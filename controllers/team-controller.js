@@ -15,18 +15,24 @@ var teamController = {
             const savedTeam = await newTeam.save();
             return res.status(200).send({ team: savedTeam });
         } catch (error) {
-            console.error(error);
+
             return res.status(500).send({ error: error.message });
         }
     },
     read: async function(req, res) {
         const teamID = req.params.id;
-        var query = { user_id: req.params.id };
+
+        var query = { user_id: teamID };
         try {
             const readTeam = await Team.find(query).populate('collegues');
-            return res.status(200).send(readTeam[0]);
+            if (!readTeam) {
+                return res.status(500).send({ error: "Team not created !!!" });
+            } else {
+                return res.status(200).send(readTeam[0]);
+            }
+
         } catch (error) {
-            console.error(error);
+
             return res.status(500).send({ error: error.message });
         }
     },
