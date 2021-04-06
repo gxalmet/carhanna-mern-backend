@@ -23,7 +23,7 @@ var screamController = {
         var query = { projectId: projectIdSearch };
 
         try {
-            const screamSearch = await Scream.find(query).populate('messages.authorUsername');
+            const screamSearch = await Scream.find(query).populate('messages.authorUsername').populate('projectId');
 
             return res.status(200).send(screamSearch[0]);
         } catch (error) {
